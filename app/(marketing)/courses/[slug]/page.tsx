@@ -1,6 +1,7 @@
-import React from "react";
+import React, { cache } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Metadata } from "next";
 import pool from "@/lib/db";
 import { courseMap, CourseData } from "@/lib/courseData";
 
@@ -17,14 +18,7 @@ import ModernLinearCourseLayout from "@/components/sections/course-linear/Modern
 
 export const dynamic = "force-dynamic";
 
-export default async function CoursePage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const { slug } = params;
-
-  // 1. Fetch from Database First
+const getCourseData = cache(async (slug: string): Promise<CourseData | null> => {
   let dbCourse = null;
   try {
     const res = await pool.query(
@@ -38,28 +32,15 @@ export default async function CoursePage({
     console.error("DB Error fetching course:", error);
   }
 
-  // 2. Fallback to hardcoded courseMap
   const staticCourse = courseMap[slug];
 
   if (!dbCourse && !staticCourse) {
-    return (
-      <div className="section-container section-padding text-center">
-        <h1 className="heading-lg mb-4 text-[var(--tw-colors-ink-900)]">Course Not Found</h1>
-        <p className="body-lg mb-8 text-ink-500">
-          The course you're looking for doesn't exist or has been moved.
-        </p>
-        <Link href="/" className="bg-brand-blue text-white px-6 py-3 rounded-full font-bold">
-          Back to Home
-        </Link>
-      </div>
-    );
+    return null;
   }
 
-  // 3. Merge data (DB marketing_data overrides static data if it has keys)
   let finalCourse: CourseData;
   
   if (dbCourse && dbCourse.marketing_data && Object.keys(dbCourse.marketing_data).length > 0) {
-    // If we have rich marketing data in DB, use it!
     finalCourse = {
       ...(staticCourse || {}),
       ...dbCourse.marketing_data,
@@ -68,7 +49,6 @@ export default async function CoursePage({
       id: dbCourse.id,
     } as CourseData;
 
-    // If curriculum isn't in marketing_data, fetch from modules/chapters tables
     if (!finalCourse.curriculum || finalCourse.curriculum.length === 0) {
       try {
         const dbMods = await pool.query(
@@ -82,7 +62,7 @@ export default async function CoursePage({
           [dbCourse.id]
         );
         if (dbMods.rows.length > 0) {
-          finalCourse.curriculum = dbMods.rows.map(r => ({
+          finalCourse.curriculum = dbMods.rows.map((r: any) => ({
             module: r.title,
             topics: Array.isArray(r.topics) ? r.topics : (typeof r.topics === 'string' ? JSON.parse(r.topics) : [])
           }));
@@ -92,43 +72,88 @@ export default async function CoursePage({
       }
     }
   } else {
-    // Just use static
     finalCourse = staticCourse;
   }
 
-  // Every course uses the unified Modern Linear Layout with all 5 common career & project sections
-  return <ModernLinearCourseLayout course={finalCourse} />;
+  return finalCourse;
+});
 
-  // Default layout for other courses (Udemy/Coursera 2-column style)
-  return (
-    <main className="min-h-screen bg-slate-50 font-sans pb-24 relative">
-      <UdemyStyleHero 
-        title={finalCourse.title}
-        subtitle={finalCourse.subtitle}
-        description={finalCourse.description}
-        lastUpdated="11/2026"
-        rating="4.8"
-        enrolled="10,000+"
-      />
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const course = await getCourseData(params.slug);
 
-      <div className="section-container relative z-10 flex flex-col xl:flex-row gap-8 pt-12">
-        <div className="xl:w-[65%] w-full">
-          <CourseOverview description={finalCourse.description} outcomes={finalCourse.outcomes} />
-          <ProgramHighlights usps={finalCourse.usps || []} specialHighlights={finalCourse.specialHighlights} />
-          <WhoShouldJoin whoIsThisFor={finalCourse.whoIsThisFor} />
-          <CourseModules curriculum={finalCourse.curriculum || []} />
-          <ToolsMastered tools={finalCourse.tools || []} />
-          <CourseFAQs faqs={finalCourse.faqs} />
-        </div>
+  if (!course) {
+    return {
+      title: "Course Not Found | Digital Ghuru",
+    };
+  }
 
-        <div className="xl:w-[35%] w-full">
-           <StickyEnrollmentCard 
-             originalPrice={finalCourse.originalPrice}
-             discountedPrice={finalCourse.discountedPrice}
-             imageUrl="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800"
-           />
-        </div>
+  return {
+    title: `${course.title} | Digital Ghuru`,
+    description: course.description || "Master digital marketing with Digital Ghuru's premium courses.",
+    openGraph: {
+      title: `${course.title} | Digital Ghuru`,
+      description: course.description || "Master digital marketing with Digital Ghuru's premium courses.",
+      type: "website",
+      images: [
+        {
+          url: (course as any).cardImage || "/images/Hero Image.jpeg",
+          width: 1200,
+          height: 630,
+          alt: course.title,
+        },
+      ],
+    },
+  };
+}
+
+export default async function CoursePage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = params;
+  const finalCourse = await getCourseData(slug);
+
+  if (!finalCourse) {
+    return (
+      <div className="section-container section-padding text-center">
+        <h1 className="heading-lg mb-4 text-[var(--tw-colors-ink-900)]">Course Not Found</h1>
+        <p className="body-lg mb-8 text-ink-500">
+          The course you're looking for doesn't exist or has been moved.
+        </p>
+        <Link href="/" className="bg-brand-blue text-white px-6 py-3 rounded-full font-bold">
+          Back to Home
+        </Link>
       </div>
-    </main>
+    );
+  }
+
+  // Generate JSON-LD Structured Data for Course
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": finalCourse.title,
+    "description": finalCourse.description,
+    "provider": {
+      "@type": "Organization",
+      "name": "Digital Ghuru",
+      "sameAs": "https://digitalghuru.in"
+    }
+  };
+
+  return (
+    <>
+      {/* Inject JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      {/* Every course uses the unified Modern Linear Layout */}
+      <ModernLinearCourseLayout course={finalCourse} />
+    </>
   );
 }

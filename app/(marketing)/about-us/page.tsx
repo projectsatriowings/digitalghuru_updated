@@ -222,7 +222,7 @@ export default function AboutUsPage() {
         title="India's Leading Agency-Style"
         titleHighlight="AI-Powered Digital Marketing Institute"
         description="With over 500+ students trained, Digital Ghuru is an award-winning AI-powered digital marketing institute shaping the future of marketing talent across India."
-        primaryCta={{ label: "View Our Courses", href: "/courses" }}
+        primaryCta={{ label: "View Our Courses", href: "/#course-grid" }}
         imageUrl="/images/about-hero.jpg"
       />
 
