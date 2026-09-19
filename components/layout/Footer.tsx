@@ -52,100 +52,75 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer className="bg-[#006FFF] text-white">
-      {/* ── Main Grid ── */}
-      <div className="section-container py-16 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-          {/* ── Column 1: Locations ── */}
-          <div>
-            <h4 className="font-display text-xl font-bold text-white mb-6">
-              Our Campus
-            </h4>
-            <div className="space-y-6">
-              {locations.map((loc) => (
-                <div key={loc.name} className="space-y-2">
-                  <h5 className="font-heading font-semibold text-white text-base">
-                    {loc.name}
-                  </h5>
-                  <div className="flex items-start gap-2 text-white/90 text-base">
-                    <MapPin className="h-5 w-5 shrink-0 mt-0.5" />
-                    <span>{loc.address}</span>
-                  </div>
-                  <a
-                    href={`tel:${loc.phone.replace(/\\s/g, "")}`}
-                    className="flex items-center gap-2 text-white/90 text-base hover:text-brand-gold transition-colors duration-200"
-                  >
-                    <Phone className="h-4 w-4 shrink-0" />
-                    <span>{loc.phone}</span>
-                  </a>
+      <div className="section-container pt-10 pb-8 md:pt-12 md:pb-10">
+        {/* ── Top Section: Our Campuses (Horizontal) ── */}
+        <div className="pb-8 border-b border-white/15">
+          <h4 className="font-display text-xl font-bold text-white mb-5">
+            Our Campuses
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {locations.map((loc) => (
+              <div key={loc.name} className="space-y-2">
+                <h5 className="font-heading font-semibold text-white text-base">
+                  {loc.name}
+                </h5>
+                <div className="flex items-start gap-2 text-white/90 text-sm leading-relaxed">
+                  <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
+                  <span>{loc.address}</span>
                 </div>
-              ))}
-            </div>
+                <a
+                  href={`tel:${loc.phone.replace(/\s/g, "")}`}
+                  className="inline-flex items-center gap-2 text-white/90 text-sm hover:text-brand-gold transition-colors duration-200"
+                >
+                  <Phone className="h-4 w-4 shrink-0" />
+                  <span>{loc.phone}</span>
+                </a>
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* ── Column 2: Quick Links ── */}
-          <div>
-            <h4 className="font-display text-xl font-bold text-white mb-6">
-              Quick Links
-            </h4>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-base text-white/90 hover:text-brand-gold transition-colors duration-200"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* ── Column 3: Course Links ── */}
-          <div>
-            <h4 className="font-display text-xl font-bold text-white mb-6">
-              Our Courses
-            </h4>
-            <ul className="space-y-3">
-              {courseLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-base text-white/90 hover:text-brand-gold transition-colors duration-200"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* ── Column 4: About + Social ── */}
-          <div>
+        {/* ── Bottom Section: Brand & Links ── */}
+        <div className="pt-8 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
+          {/* ── Brand + Collaboration + Social ── */}
+          <div className="md:col-span-6 lg:col-span-6">
             {/* Logos: Digital Ghuru X Jaighurudeva */}
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-4">
               <Link href="/" className="shrink-0">
                 <img
                   src="/logo-final dG.webp"
                   alt="Digital Ghuru Logo"
-                  className="h-16 w-auto object-contain"
+                  className="h-14 w-auto object-contain"
                 />
               </Link>
               <span className="text-white/60 font-medium text-lg shrink-0">✕</span>
-              <a href="https://jaighurudeva.in/" target="_blank" rel="noopener noreferrer" className="shrink-0">
+              <a
+                href="https://jaighurudeva.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0"
+              >
                 <img
                   src="/partners/jaighurudevalogo.png"
                   alt="Jaighurudeva Educational Academy"
-                  className="h-16 w-auto object-contain scale-110"
+                  className="h-14 w-auto object-contain scale-110"
                 />
               </a>
             </div>
 
-            <div className="mb-6 space-y-4">
-              <p className="font-body text-base text-white/90 leading-relaxed">
-                In proud collaboration with <a href="https://jaighurudeva.in/" target="_blank" rel="noopener noreferrer" className="text-white font-semibold hover:text-brand-gold transition-colors">Jaighurudeva Educational Academy</a>, combining our digital expertise with their legacy of academic excellence and personalized mentorship.
-              </p>
-            </div>
+            <p className="font-body text-sm md:text-base text-white/90 leading-relaxed mb-5 max-w-lg">
+              In proud collaboration with{" "}
+              <a
+                href="https://jaighurudeva.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white font-semibold hover:text-brand-gold transition-colors"
+              >
+                Jaighurudeva Educational Academy
+              </a>
+              , combining our digital expertise with their legacy of academic
+              excellence and personalized mentorship.
+            </p>
 
             {/* Social Icons */}
             <div className="flex items-center gap-3">
@@ -156,23 +131,61 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className={`h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center text-white/90 hover:text-white transition-all duration-200 ${social.hoverClass}`}
+                  className={`h-9 w-9 rounded-lg bg-white/10 flex items-center justify-center text-white/90 hover:text-white transition-all duration-200 ${social.hoverClass}`}
                 >
                   <social.icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
           </div>
+
+          {/* ── Quick Links ── */}
+          <div className="md:col-span-3 lg:col-span-3">
+            <h4 className="font-display text-lg font-bold text-white mb-4">
+              Quick Links
+            </h4>
+            <ul className="space-y-2.5">
+              {quickLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm md:text-base text-white/90 hover:text-brand-gold transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ── Course Links ── */}
+          <div className="md:col-span-3 lg:col-span-3">
+            <h4 className="font-display text-lg font-bold text-white mb-4">
+              Our Courses
+            </h4>
+            <ul className="space-y-2.5">
+              {courseLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm md:text-base text-white/90 hover:text-brand-gold transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 
       {/* ── Bottom Bar ── */}
       <div className="border-t border-white/10">
-        <div className="section-container py-5 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-base text-white/70">
+        <div className="section-container py-4 flex flex-col md:flex-row items-center justify-between gap-2">
+          <p className="text-sm text-white/70">
             © {new Date().getFullYear()} Digital Ghuru. All rights reserved.
           </p>
-          <p className="text-base text-white/60">
+          <p className="text-sm text-white/60">
             Crafted with passion for digital excellence
           </p>
         </div>
