@@ -944,6 +944,19 @@ export default function CourseWizard({
                 <input type="text" value={data.discountedPrice} onChange={e => setData({...data, discountedPrice: e.target.value})} placeholder="e.g. 25000" className="w-full px-4 py-3 rounded-xl border border-ink-200 focus:border-brand-blue outline-none" />
               </div>
             </div>
+
+            <div className="flex items-center gap-3 p-4 bg-ink-50 rounded-xl border border-ink-100 mt-6">
+              <input
+                type="checkbox"
+                id="showCareerFeaturesWizard"
+                checked={mData.showCareerFeatures !== false}
+                onChange={e => updateMarketing("showCareerFeatures", e.target.checked)}
+                className="w-5 h-5 rounded border-ink-300 text-brand-blue focus:ring-brand-blue cursor-pointer"
+              />
+              <label htmlFor="showCareerFeaturesWizard" className="font-heading font-semibold text-ink-900 text-sm cursor-pointer select-none">
+                Show Career & Placement Sections (AI Profile Building, Internships, Placement Support)
+              </label>
+            </div>
           </div>
         )}
 
@@ -1246,7 +1259,7 @@ export default function CourseWizard({
                   </button>
                 </div>
               ))}
-              <Button variant="outline" onClick={() => updateMarketing("whyDigitalGhuru", { ...mData.whyDigitalGhuru, reasons: [...(mData.whyDigitalGhuru.reasons || []), { num: "0" + ((mData.whyDigitalGhuru.reasons?.length || 0) + 1), title: "New Reason", description: "Desc", iconName: "CheckCircle", color: "border-brand-blue bg-blue-50 text-brand-blue", numBg: "bg-surface-dark text-white", dotColor: "bg-brand-blue" }] })} className="w-full border-dashed">
+              <Button variant="outline" onClick={() => updateMarketing("whyDigitalGhuru", { ...mData.whyDigitalGhuru, reasons: [...(mData.whyDigitalGhuru.reasons || []), { num: "0" + ((mData.whyDigitalGhuru.reasons?.length || 0) + 1), title: "New Reason", description: "Desc", iconName: "CheckCircle" }] })} className="w-full border-dashed">
                 <Plus className="h-4 w-4 mr-2" /> Add Reason
               </Button>
             </div>

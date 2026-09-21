@@ -22,6 +22,7 @@ interface LinearSidebarCardProps {
   format?: string;
   previewImage?: string;
   brochureUrl?: string;
+  showCareerFeatures?: boolean;
 }
 
 export default function LinearSidebarCard({
@@ -34,6 +35,7 @@ export default function LinearSidebarCard({
   format = "Hybrid (Offline + Online)",
   previewImage,
   brochureUrl,
+  showCareerFeatures = true,
 }: LinearSidebarCardProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -286,12 +288,14 @@ export default function LinearSidebarCard({
                   </div>
                   <span>{format || "Classroom + Online"}</span>
                 </li>
-                <li className="flex items-center gap-3 font-body text-ink-700 text-base font-medium group">
-                  <div className="p-2 rounded-xl bg-purple-50 text-purple-600 group-hover:scale-110 group-hover:bg-purple-100 transition-all shadow-2xs">
-                    <ShieldCheck className="h-4 w-4 shrink-0" />
-                  </div>
-                  <span>Placement assistance</span>
-                </li>
+                {showCareerFeatures && (
+                  <li className="flex items-center gap-3 font-body text-ink-700 text-base font-medium group">
+                    <div className="p-2 rounded-xl bg-purple-50 text-purple-600 group-hover:scale-110 group-hover:bg-purple-100 transition-all shadow-2xs">
+                      <ShieldCheck className="h-4 w-4 shrink-0" />
+                    </div>
+                    <span>Placement assistance</span>
+                  </li>
+                )}
                 <li className="flex items-center gap-3 font-body text-ink-700 text-base font-medium group">
                   <div className="p-2 rounded-xl bg-rose-50 text-rose-600 group-hover:scale-110 group-hover:bg-rose-100 transition-all shadow-2xs">
                     <Award className="h-4 w-4 shrink-0" />

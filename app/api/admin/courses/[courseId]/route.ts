@@ -55,6 +55,14 @@ export async function PATCH(
       ...(discountedPrice !== undefined ? { discountedPrice } : {})
     };
 
+    // Sanitize whyDigitalGhuru reasons to remove hardcoded colors so frontend fallbacks work
+    if (finalMarketingData.whyDigitalGhuru && Array.isArray(finalMarketingData.whyDigitalGhuru.reasons)) {
+      finalMarketingData.whyDigitalGhuru.reasons = finalMarketingData.whyDigitalGhuru.reasons.map((r: any) => {
+        const { color, numBg, dotColor, ...restReason } = r;
+        return restReason;
+      });
+    }
+
     // Update the course
     await pool.query(
       `UPDATE courses SET 

@@ -56,6 +56,7 @@ export default function ModernLinearCourseLayout({ course, hideBreadcrumbs = fal
               format={course.format}
               brochureUrl={course.brochureUrl}
               previewImage={course.cardImage || course.marketing_data?.cardImage || course.bannerImage || course.marketing_data?.bannerImage}
+              showCareerFeatures={course.showCareerFeatures !== false}
             />
           </div>
 
@@ -91,21 +92,20 @@ export default function ModernLinearCourseLayout({ course, hideBreadcrumbs = fal
         {/* Curriculum / Modules */}
         <LinearCurriculum curriculum={course.curriculum || []} />
 
-        {/* 5 Core Common Sections across all courses:
-            1. AI Enhanced Profile Building
-            2. Internship & Real-Time Projects
-            3. Placement Support System
-            4. Soft Skills & Career Training
-            5. Career Opportunities */}
-        <LinearAIProfileBuilding 
-          description={course.aiProfileBuildingDesc} 
-        />
+        {/* 5 Core Common Sections across all courses */}
+        {course.showCareerFeatures !== false && (
+          <>
+            <LinearAIProfileBuilding 
+              description={course.aiProfileBuildingDesc} 
+            />
 
-        <LinearInternshipProjects />
+            <LinearInternshipProjects />
 
-        <LinearSoftSkillsCareer 
-          careerDesc={course.title ? `The demand for skilled ${course.title} professionals is rapidly growing across industries.` : undefined}
-        />
+            <LinearSoftSkillsCareer 
+              careerDesc={course.title ? `The demand for skilled ${course.title} professionals is rapidly growing across industries.` : undefined}
+            />
+          </>
+        )}
 
         <LinearFAQs faqs={course.faqs} />
       </div>
