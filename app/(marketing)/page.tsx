@@ -200,11 +200,15 @@ const fadeUpItem: any = {
 export default function HomePage() {
   const router = useRouter();
   const { triggerAction, GateModalComponent } = useCourseGate("Digital Ghuru Courses");
-  const [courseList, setCourseList] = useState(initialCourses);
+  const [courseList, setCourseList] = useState<typeof initialCourses>([]);
+  const [coursesLoading, setCoursesLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/courses")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`API returned ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           const dbCourses = data.map((c: any) => {
@@ -215,18 +219,23 @@ export default function HomePage() {
               format: mData.format || "Classroom + Online",
               duration: mData.duration || "3 to 6 Months",
               brochureUrl: mData.brochureUrl || "",
-              discountedPrice:
+              discountedPrice: String(
                 mData.discountedPrice ||
-                (c.price ? `₹${Number(c.price).toLocaleString()}` : "Contact Us"),
-              originalPrice: mData.originalPrice || "—",
+                (c.price ? `₹${Number(c.price).toLocaleString()}` : "Contact Us")),
+              originalPrice: String(mData.originalPrice || "—"),
               cardImage: mData.cardImage || c.cardImage || mData.thumbnail || "",
               ctaHref: c.slug ? `/courses/${c.slug}` : `/courses/${c.id}`,
             };
           });
           setCourseList(dbCourses);
+        } else {
+          setCourseList(initialCourses);
         }
       })
-      .catch((err) => console.error("Failed to load courses from DB:", err));
+      .catch(() => {
+        setCourseList(initialCourses);
+      })
+      .finally(() => setCoursesLoading(false));
   }, []);
 
   const handleViewDetails = (href: string) => {
@@ -316,31 +325,48 @@ export default function HomePage() {
             </p>
           </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className={`grid gap-8 ${
-              courseList.length === 1
-                ? "grid-cols-1 max-w-md mx-auto"
-                : courseList.length === 2
-                ? "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto"
-                : courseList.length === 3
-                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto"
-                : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-            }`}
-          >
-            {courseList.map((course, idx) => (
-              <motion.div key={idx} variants={fadeUpItem}>
-                <CourseCard
-                  {...course}
-                  onViewDetails={handleViewDetails}
-                  onDownloadBrochure={handleDownloadBrochure}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+          {coursesLoading ? (
+            /* ── Loading Skeleton ── */
+            <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse rounded-2xl border border-ink-100 overflow-hidden">
+                  <div className="aspect-[16/9] bg-slate-200" />
+                  <div className="p-6 space-y-3">
+                    <div className="h-5 bg-slate-200 rounded w-3/4" />
+                    <div className="h-4 bg-slate-100 rounded w-full" />
+                    <div className="h-4 bg-slate-100 rounded w-2/3" />
+                    <div className="h-8 bg-slate-200 rounded w-1/3 mt-4" />
+                    <div className="h-10 bg-slate-200 rounded w-full mt-4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+              className={`grid gap-8 ${
+                courseList.length === 1
+                  ? "grid-cols-1 max-w-md mx-auto"
+                  : courseList.length === 2
+                  ? "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto"
+                  : courseList.length === 3
+                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto"
+                  : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              }`}
+            >
+              {courseList.map((course, idx) => (
+                <motion.div key={course.ctaHref || idx} variants={fadeUpItem}>
+                  <CourseCard
+                    {...course}
+                    onViewDetails={handleViewDetails}
+                    onDownloadBrochure={handleDownloadBrochure}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </div>
       </section>
 

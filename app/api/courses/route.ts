@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import pool from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const res = await pool.query(
