@@ -270,7 +270,7 @@ export default function CareersClient({ jobs }: { jobs: any[] }) {
                               onClick={(e) => {
                                 if (typeof window !== "undefined" && (window as any).lenis) {
                                   e.preventDefault();
-                                  (window as any).lenis.scrollTo("#speculative-form");
+                                  (window as any).lenis.scrollTo("#speculative-form", { offset: -80, duration: 1.5 });
                                 }
                                 setFormData({
                                   ...formData,
