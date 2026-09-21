@@ -15,6 +15,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['pg'],
   },
+  output: "standalone",
   webpack: (config, { dev }) => {
     if (dev) {
       config.cache = false;
