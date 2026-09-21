@@ -123,7 +123,7 @@ function DesktopSubDropdown({ item }: { item: NavDropdownItem }) {
                 href={child.href}
                 target={child.target}
                 rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
-                className="block px-4 py-2.5 font-body text-sm text-ink-700 hover:bg-brand-blue/5 hover:text-brand-blue rounded-lg transition-colors duration-150"
+                className="block px-4 py-2.5 font-body text-sm text-ink-700 hover:bg-brand-blue/5 hover:text-brand-blue rounded-lg transition-colors duration-150 whitespace-nowrap"
               >
                 {child.label}
               </Link>
@@ -170,7 +170,7 @@ function DesktopDropdown({ item }: { item: NavItem }) {
                   href={child.href || "#"}
                   target={child.target}
                   rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
-                  className="block px-4 py-2.5 font-body text-base text-ink-700 hover:bg-brand-blue/5 hover:text-brand-blue rounded-lg transition-colors duration-150"
+                  className="block px-4 py-2.5 font-body text-base text-ink-700 hover:bg-brand-blue/5 hover:text-brand-blue rounded-lg transition-colors duration-150 whitespace-nowrap"
                 >
                   {child.label}
                 </Link>
