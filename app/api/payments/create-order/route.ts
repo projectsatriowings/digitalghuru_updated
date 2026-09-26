@@ -40,7 +40,14 @@ export async function POST(req: Request) {
 
     const order = await razorpay.orders.create(options);
 
-    return NextResponse.json({ orderId: order.id, amount: order.amount, currency: order.currency });
+    const keyId = settings.razorpay_key_id || process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+
+    return NextResponse.json({ 
+      orderId: order.id, 
+      amount: order.amount, 
+      currency: order.currency,
+      keyId: keyId 
+    });
   } catch (error: any) {
     console.error("Error creating Razorpay order:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

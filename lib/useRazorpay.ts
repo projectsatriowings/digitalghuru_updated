@@ -40,11 +40,11 @@ export function useRazorpay() {
           throw new Error(errData.error || "Failed to create order");
         }
 
-        const { orderId, amount, currency } = await result.json();
+        const { orderId, amount, currency, keyId } = await result.json();
 
         // 2. Setup Razorpay options
         const options: any = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "test_key", 
+          key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "test_key", 
           amount: amount.toString(),
           currency: currency,
           name: "Digital Ghuru",
