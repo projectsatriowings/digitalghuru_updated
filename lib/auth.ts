@@ -157,6 +157,22 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).role = token.role;
       }
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      try {
+        const parsed = new URL(url);
+        if (
+          parsed.hostname.endsWith("digitalghuru.in") ||
+          parsed.hostname.endsWith("digitalghuru.com") ||
+          parsed.hostname === "localhost"
+        ) {
+          return url;
+        }
+      } catch {
+        // Fallback to baseUrl
+      }
+      return baseUrl;
     }
   },
   pages: {
